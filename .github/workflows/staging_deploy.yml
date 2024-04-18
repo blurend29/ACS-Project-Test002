@@ -5,13 +5,15 @@ on:
     branches:
     - prod
     paths:
-    - staging/**
+    - network/**
+    - webservers/**
 
   pull_request:
     branches:
     - prod
     paths: 
-    - staging/**
+    - network/**
+    - webservers/**
 
 permissions:
   contents: read
@@ -42,19 +44,19 @@ jobs:
         id: fmt
         run: terraform fmt 
         continue-on-error: true
-        working-directory: ./staging
+        working-directory: ./network
 
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./staging
+        working-directory: ./network
 
            
       - name: Terraform Validate
         id: validate
         run: terraform validate -no-color
-        working-directory: ./staging
+        working-directory: ./network
 
     
       - name: Terraform Plan
@@ -114,6 +116,6 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/prod' && github.event_name == 'push'
         run: terraform apply -input=false tf.plan
-        working-directory: ./staging # Use your environment folder
+        working-directory: ./network # Use your environment folder
         shell: bash
         

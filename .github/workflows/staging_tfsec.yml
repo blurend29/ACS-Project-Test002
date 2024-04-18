@@ -9,11 +9,13 @@ on:
   push:
     branches: [ "dev", "staging"]
     paths: 
-    - staging/**
+    - network/**
+    - webservers/**
   pull_request:
     branches: [ "prod" ]
     paths: 
-    - staging/**
+    - network/**
+    - webservers/**
 
 jobs:
   tfsec_tflint_staging:
@@ -38,11 +40,11 @@ jobs:
 
       - name: Init TFLint
         run: tflint --init
-        working-directory: ./staging
+        working-directory: ./network
 
       - name: Run TFLint
         run: tflint -f compact
-        working-directory: ./staging
+        working-directory: ./network
 
       - name: Run tfsec
         uses: aquasecurity/tfsec-sarif-action@9a83b5c3524f825c020e356335855741fd02745f
