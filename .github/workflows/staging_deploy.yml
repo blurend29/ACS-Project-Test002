@@ -41,49 +41,49 @@ jobs:
           terraform_wrapper: true
 
       - name: Terraform fmt network
-        id: fmt
+        id: fmt1
         run: terraform fmt 
         continue-on-error: true
         working-directory: ./network
 
       - name: Terraform fmt webservers
-        id: fmt
+        id: fmt2
         run: terraform fmt 
         continue-on-error: true
         working-directory: ./webservers
 
 
       - name: Terraform Init network
-        id: init
+        id: init1
         run: terraform init
         working-directory: ./network
 
            
       - name: Terraform Init webservers
-        id: init
+        id: init2
         run: terraform init
         working-directory: ./webservers
 
       - name: Terraform Validate network
-        id: validate
+        id: validate1
         run: terraform validate -no-color
         working-directory: ./network
 
       - name: Terraform Validate webservers
-        id: validate
+        id: validate2
         run: terraform validate -no-color
         working-directory: ./webservers
 
     
       - name: Terraform Plan network
-        id: plan
-        run: terraform plan -input=false -no-color -out tf.plan
+        id: plan1
+        run: terraform plan -input=false -no-color -out tf1.plan
         working-directory: ./network # Use your environment folder
         continue-on-error: true
 
       - name: Terraform Plan webservers
-        id: plan
-        run: terraform plan -input=false -no-color -out tf.plan
+        id: plan2
+        run: terraform plan -input=false -no-color -out tf2.plan
         working-directory: ./webservers # Use your environment folder
         continue-on-error: true
 
@@ -91,13 +91,13 @@ jobs:
         run: echo "${{ steps.validate.outputs.stdout }}"
       
       - name: Terraform Show network
-        id: show
-        run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
+        id: show1
+        run: terraform show -no-color tf1.plan 2>&1 > /tmp/plan1.txt
         working-directory: ./network # Use your environment folder
           
       - name: Terraform Show webservers
-        id: show
-        run: terraform show -no-color tf.plan 2>&1 > /tmp/plan.txt
+        id: show2
+        run: terraform show -no-color tf2.plan 2>&1 > /tmp/plan2.txt
         working-directory: ./webservers # Use your environment folder
           
       - uses: actions/github-script@v6
@@ -142,13 +142,13 @@ jobs:
 
       - name: Terraform Apply network
         if: github.ref == 'refs/heads/prod' && github.event_name == 'push'
-        run: terraform apply -input=false tf.plan
+        run: terraform apply -input=false tf1.plan
         working-directory: ./network # Use your environment folder
         shell: bash
         
       - name: Terraform Apply webservers
         if: github.ref == 'refs/heads/prod' && github.event_name == 'push'
-        run: terraform apply -input=false tf.plan
+        run: terraform apply -input=false tf2.plan
         working-directory: ./webservers # Use your environment folder
         shell: bash
         
