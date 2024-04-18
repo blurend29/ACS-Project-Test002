@@ -20,7 +20,7 @@ data "terraform_remote_state" "public_subnet" { // This is to use Outputs from R
   backend = "s3"
   config = {
     bucket = "lab2tfstate112233"             // Bucket from where to GET Terraform State
-    key    = "prod/network/terraform.tfstate" // Object name in the bucket to GET Terraform State
+    key    = "Non-prod/network/terraform.tfstate" // Object name in the bucket to GET Terraform State
     region = "us-east-1"                     // Region where bucket created
   }
 }
