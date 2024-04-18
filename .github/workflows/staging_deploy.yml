@@ -20,8 +20,8 @@ permissions:
   pull-requests: write
 
 jobs:
-  terraform:
-    name: "Terraform"
+  terraform-network:
+    name: "Terraform Network"
     runs-on: ubuntu-latest
     environment: staging
     env:
@@ -46,35 +46,16 @@ jobs:
         continue-on-error: true
         working-directory: ./network
 
-      - name: Terraform fmt webservers
-        id: fmt2
-        run: terraform fmt 
-        continue-on-error: true
-        working-directory: ./webservers
-
-
       - name: Terraform Init network
         id: init1
         run: terraform init
         working-directory: ./network
-
-           
-      - name: Terraform Init webservers
-        id: init2
-        run: terraform init
-        working-directory: ./webservers
 
       - name: Terraform Validate network
         id: validate1
         run: terraform validate -no-color
         working-directory: ./network
 
-      - name: Terraform Validate webservers
-        id: validate2
-        run: terraform validate -no-color
-        working-directory: ./webservers
-
-    
       - name: Terraform Plan network
         id: plan1
         run: terraform plan -input=false -no-color -out tf1.plan
@@ -135,6 +116,43 @@ jobs:
         working-directory: ./network # Use your environment folder
         shell: bash
         
+  terraform-webservers:
+    needs: terraform-network
+    name: "Terraform WebServers"
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN:  ${{ secrets.AWS_SESSION_TOKEN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.9
+          terraform_wrapper: true
+
+      - name: Terraform fmt webservers
+        id: fmt2
+        run: terraform fmt 
+        continue-on-error: true
+        working-directory: ./webservers
+
+      - name: Terraform Init webservers
+        id: init2
+        run: terraform init
+        working-directory: ./webservers
+
+       - name: Terraform Validate webservers
+        id: validate2
+        run: terraform validate -no-color
+        working-directory: ./webservers
+
       - name: Terraform Plan webservers
         id: plan2
         run: terraform plan -input=false -no-color -out tf2.plan
