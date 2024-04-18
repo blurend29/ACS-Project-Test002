@@ -56,3 +56,22 @@ jobs:
         with:
           # Path to SARIF file relative to the root of the repository
           sarif_file: tfsec.sarif
+
+      - name: Init TFLint 2
+        run: tflint --init
+        working-directory: ./webservers
+
+      - name: Run TFLint 2
+        run: tflint -f compact
+        working-directory: ./webservers
+
+      - name: Run tfsec 2
+        uses: aquasecurity/tfsec-sarif-action@9a83b5c3524f825c020e356335855741fd02745f
+        with:
+          sarif_file: tfsec.sarif
+
+      - name: Upload SARIF file 2
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: tfsec.sarif
